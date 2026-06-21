@@ -6,7 +6,7 @@
 
 ## 中文
 
-一款基于 PySide6 的 Windows 桌面便签应用，支持 Markdown 渲染、多便签管理与丰富的外观定制，所有功能均通过右键菜单访问。
+一款基于 PySide6 的 Windows 桌面便签应用，支持 Markdown 渲染、多便签管理，可通过设置调整语言与外观，所有功能均通过右键菜单访问。
 
 ### 下载
 
@@ -29,12 +29,10 @@
 
 #### 内容编辑
 
-- 支持 GitHub Flavored Markdown（标题、粗体、斜体、代码块、链接、表格等）
+- 支持 GitHub Flavored Markdown
 - **双击**便签正文直接打开 Markdown 编辑器，输入时实时预览
 - 编辑器界面跟随系统深色/浅色主题
-- Checklist（`- [ ] 任务`）在解锁状态下可直接点击勾选，自动对后续文字添加/移除删除线
-- 表格中的 Checklist 同样支持点击，首列纯 Checkbox 勾选时整行划线；其他情况仅对格内文字划线
-- Markdown 表格支持列对齐标记（`|:---:|`），表头与数据行均生效
+- **拖入图片**：在编辑器中将本地图片文件拖入即可插入（支持 PNG、JPG、GIF、BMP、WebP、SVG、ICO）。图片会复制到程序目录下的 `attachments/`，并插入 `![描述](attachments/xxx.png)` 语法；便签中随窗口宽度自动缩放显示。删除便签内容里不再引用的图片时，会自动清理对应附件
 
 #### 窗口管理
 
@@ -44,20 +42,12 @@
 - **最小化到系统托盘**：右键 → 最小化到托盘；双击托盘图标或托盘右键 → 显示全部便签
 - **锁定模式**：锁定后窗口不可移动、文字不可编辑，鼠标完全穿透至下层窗口；`Ctrl + Alt + 右键` 可在锁定状态下打开菜单
 
-#### 外观定制
+#### 设置
 
-所有外观选项集中在"外观设置"窗口，修改后实时预览，点击保存生效，取消还原。
+右键菜单 → **设置…** 打开设置窗口，修改后实时预览；**保存** 生效，**取消** 还原。
 
-| 分组 | 选项 |
-|:-----|:-----|
-| 颜色 | 背景颜色与透明度、文字颜色与透明度 |
-| 字体 | 字体族、字号 |
-| 间距 | 字间距（px）、行距（%） |
-| 布局 | 水平/垂直页边距、九宫格对齐（↖ ↑ ↗ ← · → ↙ ↓ ↘） |
-| 文字效果 | 外发光（颜色/透明度）或文字描边（颜色/宽度），二者互斥 |
-| 边框 | 启用/禁用、颜色、宽度、圆角半径 |
-
-**九宫格对齐说明：** 水平方向控制文字左/居中/右对齐，垂直方向控制内容在文字区顶/中/底部显示，页边距始终保持固定。
+- **通用**：界面语言（中文 / English），切换后立即生效
+- **外观**（针对当前便签）：颜色、字体、间距、布局、文字效果、高亮文字、边框等
 
 ---
 
@@ -98,14 +88,14 @@ python build.py 1.1.0     # 直接指定版本号
 
 - **输出路径：** `dist/v{版本号}/TempNote.exe`（例如 `dist/v1.1.0/TempNote.exe`）
 - **同版本重打包：** 会先删除 `dist/v{版本号}/` 与 `build/pyinstaller/` 缓存，再生成新 exe，避免残留旧文件
-- **管理员权限：** 生成的 exe 启动时会请求 UAC（全局快捷键需要）
+- **管理员权限：** 默认无需 UAC；若全局快捷键无效，可尝试以管理员身份运行
 - **中间文件：** `build/`、`dist/` 已在 `.gitignore` 中，无需提交
 
 手动调用 PyInstaller 时也可参考 `build.py` 生成的 `build/TempNote.spec`。
 
 ### 数据存储
 
-所有便签内容和设置保存在 `notes.json`（与 `main.py` / exe 同目录）。删除该文件将重置所有数据。
+所有便签内容和设置保存在 `notes.json`（与 `main.py` / exe 同目录）。编辑器插入的图片保存在同目录下的 `attachments/` 文件夹。删除 `notes.json` 将重置所有数据；`attachments/` 中未被任何便签引用的图片会在保存时自动清理。
 
 ---
 
@@ -113,7 +103,7 @@ python build.py 1.1.0     # 直接指定版本号
 
 <a name="english"></a>
 
-A Windows desktop sticky note app built with PySide6. Supports Markdown rendering, multiple notes, and rich appearance customization — all accessible via right-click menu.
+A Windows desktop sticky note app built with PySide6. Supports Markdown rendering, multiple notes, and configurable language and appearance — all accessible via right-click menu.
 
 ### Download
 
@@ -136,12 +126,10 @@ Head to the [Releases](../../releases) page and download `TempNote.exe`. No Pyth
 
 #### Content Editing
 
-- GitHub Flavored Markdown (headings, bold, italic, code blocks, links, tables, etc.)
+- GitHub Flavored Markdown
 - **Double-click** the note body to open the Markdown editor with live preview
 - Editor UI follows the system dark/light theme
-- Checklists (`- [ ] task`) are clickable while unlocked; toggling automatically adds or removes strikethrough on the line text
-- Table checklists: a lone checkbox in the first column strikes through the entire row; otherwise only the text within the same cell is struck
-- Markdown table column alignment (`|:---:|`) is respected in both the header and data rows
+- **Drag & drop images**: drop a local image file into the editor to insert it (PNG, JPG, GIF, BMP, WebP, SVG, ICO). The file is copied to `attachments/` next to the app and inserted as `![alt](attachments/xxx.png)`; images scale to the note width. Unreferenced files in `attachments/` are cleaned up when notes are saved
 
 #### Window Management
 
@@ -151,20 +139,12 @@ Head to the [Releases](../../releases) page and download `TempNote.exe`. No Pyth
 - **Minimize to tray**: right-click → Minimize to Tray; double-click the tray icon or use tray → Show All Notes to restore
 - **Lock mode**: freezes movement and editing, enables full mouse passthrough to windows below; `Ctrl + Alt + Right-click` opens the menu while locked
 
-#### Appearance
+#### Settings
 
-All options live in the Appearance Settings window with live preview. Cancel reverts all changes.
+Right-click → **Settings…** opens the settings window with live preview; **Save** applies changes, **Cancel** reverts.
 
-| Group | Options |
-|:------|:--------|
-| Colors | Background color & opacity, text color & opacity |
-| Font | Family, size |
-| Spacing | Letter spacing (px), line height (%) |
-| Layout | H/V padding, 9-grid alignment (↖ ↑ ↗ ← · → ↙ ↓ ↘) |
-| Text Effects | Glow (color / opacity) or stroke (color / width) — mutually exclusive |
-| Border | Enable/disable, color, width, corner radius |
-
-**9-grid alignment:** horizontal controls left / center / right text flow; vertical controls top / middle / bottom within the content area — padding stays fixed when resizing.
+- **General**: UI language (中文 / English), takes effect immediately
+- **Appearance** (per note): colors, font, spacing, layout, text effects, highlight, border, etc.
 
 ---
 
@@ -205,11 +185,11 @@ python build.py 1.1.0     # specify version on the command line
 
 - **Output:** `dist/v{version}/TempNote.exe` (e.g. `dist/v1.1.0/TempNote.exe`)
 - **Rebuild same version:** removes `dist/v{version}/` and the `build/pyinstaller/` cache first, then produces a fresh exe
-- **Admin / UAC:** the built exe requests elevation on launch (required for global hotkeys)
+- **Admin / UAC:** not required by default; if global hotkeys fail, try Run as administrator
 - **Generated dirs:** `build/` and `dist/` are gitignored — no need to commit them
 
 For manual PyInstaller runs, see the generated `build/TempNote.spec`.
 
 ### Data Storage
 
-All notes and settings are saved in `notes.json` next to `main.py` or the exe. Deleting this file resets everything to defaults.
+All notes and settings are saved in `notes.json` next to `main.py` or the exe. Images inserted in the editor are stored in the `attachments/` folder in the same directory. Deleting `notes.json` resets everything; orphaned files in `attachments/` are removed automatically when notes are saved.

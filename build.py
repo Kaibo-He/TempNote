@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """打包 TempNote 为 exe，输出到 dist/v{version}/TempNote.exe
 
-生成的 exe 默认请求管理员权限（启动时弹出 UAC）。
+默认不要求管理员权限；若全局快捷键无效，可右键 exe → 以管理员身份运行。
 重新打包同一版本时会先删除 dist/v{version}/ 与 PyInstaller 缓存，再生成新 exe。
 
 用法:
@@ -85,7 +85,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    uac_admin=True,
+    uac_admin=False,
 )
 """ % main_py,
         encoding="utf-8",
@@ -113,7 +113,7 @@ def main() -> None:
     version = _read_version()
     dist_dir = _clean_version_output(version)
 
-    print(f"打包 TempNote v{version} → {dist_dir}（exe 将以管理员身份运行）")
+    print(f"打包 TempNote v{version} → {dist_dir}")
     _ensure_deps()
 
     spec_path = _write_spec()
