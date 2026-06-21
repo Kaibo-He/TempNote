@@ -95,7 +95,11 @@ python build.py 1.1.0     # 直接指定版本号
 
 ### 数据存储
 
-所有便签内容和设置保存在 `notes.json`（与 `main.py` / exe 同目录）。编辑器插入的图片保存在同目录下的 `attachments/` 文件夹。删除 `notes.json` 将重置所有数据；`attachments/` 中未被任何便签引用的图片会在保存时自动清理。
+所有便签内容和设置保存在 `notes.json`（与 `main.py` / exe 同目录）。
+
+编辑器插入的图片保存在同目录下的 `attachments/` 文件夹；便签正文中以相对路径引用，例如 `![描述](attachments/abc123.png)`。迁移数据时请一并复制 `notes.json` 与 `attachments/` 文件夹。
+
+删除 `notes.json` 将重置所有数据；`attachments/` 中未被任何便签引用的图片会在保存时自动清理。
 
 ---
 
@@ -192,4 +196,8 @@ For manual PyInstaller runs, see the generated `build/TempNote.spec`.
 
 ### Data Storage
 
-All notes and settings are saved in `notes.json` next to `main.py` or the exe. Images inserted in the editor are stored in the `attachments/` folder in the same directory. Deleting `notes.json` resets everything; orphaned files in `attachments/` are removed automatically when notes are saved.
+All notes and settings are saved in `notes.json` next to `main.py` or the exe.
+
+Images inserted in the editor are stored in the `attachments/` folder in the same directory; note content references them with relative paths, e.g. `![alt](attachments/abc123.png)`. When migrating, copy both `notes.json` and the `attachments/` folder together.
+
+Deleting `notes.json` resets everything; orphaned files in `attachments/` are removed automatically when notes are saved.
