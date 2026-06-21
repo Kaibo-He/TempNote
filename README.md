@@ -6,7 +6,7 @@
 
 ## 中文
 
-一款基于 PySide6 的 Windows 桌面便签应用，支持 Markdown 渲染、多便签管理、丰富的外观定制，所有功能均通过右键菜单访问。
+一款基于 PySide6 的 Windows 桌面便签应用，支持 Markdown 渲染、多便签管理与丰富的外观定制，所有功能均通过右键菜单访问。
 
 ### 下载
 
@@ -14,50 +14,67 @@
 
 > 数据文件 `notes.json` 会在 exe 同目录下自动生成，迁移时一并复制即可。
 
+---
+
 ### 功能特性
 
-**便签管理**
-- 支持同时显示多个便签窗口
-- 右键菜单新建、重命名、显示/隐藏、删除便签
-- 所有便签内容与设置自动保存，重启后自动恢复
+#### 便签管理
 
-**内容编辑**
-- 支持 Markdown 语法，右键打开专用 Markdown 编辑器，实时预览
-- 编辑器为纯文本界面，点击保存后关闭并更新预览
+- 同时显示多个便签窗口，每个便签独立设置外观与内容
+- 右键菜单 → 便签列表：查看全部便签，支持单独显示/隐藏/删除
+- 右键菜单 → 清空所有便签：一键清空并创建新的空白便签
+- 新建便签自动出现在当前便签右侧，避免重叠
+- 所有内容与设置实时自动保存，重启后自动恢复
+- 单实例运行：重复启动时自动唤起已运行的程序
 
-**窗口管理**
-- 无边框窗口，左键拖动任意位置移动
-- 右下角可拖动调整窗口大小
+#### 内容编辑
+
+- 支持 GitHub Flavored Markdown（标题、粗体、斜体、代码块、链接、表格等）
+- **双击**便签正文直接打开 Markdown 编辑器，输入时实时预览
+- 编辑器界面跟随系统深色/浅色主题
+- Checklist（`- [ ] 任务`）在解锁状态下可直接点击勾选，自动对后续文字添加/移除删除线
+- 表格中的 Checklist 同样支持点击，首列纯 Checkbox 勾选时整行划线；其他情况仅对格内文字划线
+- Markdown 表格支持列对齐标记（`|:---:|`），表头与数据行均生效
+
+#### 窗口管理
+
+- 无边框透明窗口，左键拖动任意位置移动
+- 四边及四角均可拖动调整窗口大小，调整区域与页边距一致
 - 支持始终置顶开关
-- 支持最小化
-- 支持锁定模式：锁定后窗口不可移动、文字不可编辑，鼠标可穿透点击下层内容；`Ctrl + Shift + 右键` 可在锁定状态下打开菜单
+- **最小化到系统托盘**：右键 → 最小化到托盘；双击托盘图标或托盘右键 → 显示全部便签
+- **锁定模式**：锁定后窗口不可移动、文字不可编辑，鼠标完全穿透至下层窗口；`Ctrl + Alt + 右键` 可在锁定状态下打开菜单
 
-**外观定制**
+#### 外观定制
 
-所有外观选项集中在"外观设置"窗口中，修改后实时预览，点击保存生效，取消还原。
+所有外观选项集中在"外观设置"窗口，修改后实时预览，点击保存生效，取消还原。
 
 | 分组 | 选项 |
-|------|------|
-| 颜色 | 背景颜色与透明度、文字颜色与透明度（独立调整） |
-| 字体 | 字体、字号、加粗、下划线 |
+|:-----|:-----|
+| 颜色 | 背景颜色与透明度、文字颜色与透明度 |
+| 字体 | 字体族、字号 |
 | 间距 | 字间距（px）、行距（%） |
-| 布局 | 水平页边距、垂直页边距、文字对齐（居左/居中/居右） |
-| 文字效果 | 外发光（透明度可调）或文字描边（像素级轮廓，颜色/宽度可调），二者互斥 |
+| 布局 | 水平/垂直页边距、九宫格对齐（↖ ↑ ↗ ← · → ↙ ↓ ↘） |
+| 文字效果 | 外发光（颜色/透明度）或文字描边（颜色/宽度），二者互斥 |
 | 边框 | 启用/禁用、颜色、宽度、圆角半径 |
-| 外边框发光 | 窗口外侧柔光晕，颜色/半径/强度可调 |
 
-**其他**
-- 界面语言切换（中文 / English）
-- 右键菜单可直接切换便签、新建、重命名、删除
+**九宫格对齐说明：** 水平方向控制文字左/居中/右对齐，垂直方向控制内容在文字区顶/中/底部显示，页边距始终保持固定。
+
+---
 
 ### 快捷操作
 
 | 操作 | 方式 |
-|------|------|
+|:-----|:-----|
 | 打开右键菜单 | 右键单击便签 |
 | 移动便签 | 左键拖动 |
-| 调整大小 | 拖动右下角 |
-| 锁定状态下打开菜单 | `Ctrl + Shift + 右键` |
+| 调整大小 | 拖动四边或四角 |
+| 打开 Markdown 编辑器 | 双击便签正文 |
+| 锁定状态下打开菜单 | `Ctrl + Alt + 右键` |
+| **全局快捷键** | |
+| 新建便签 | `Ctrl + Alt + N` |
+| 显示/隐藏全部便签（切换） | `Ctrl + Alt + H` |
+
+---
 
 ### 从源码运行
 
@@ -70,15 +87,25 @@ python main.py
 
 ### 自行打包
 
+**环境要求：** 与从源码运行相同，需已安装 Python 3.10+。
+
+项目根目录提供了 `build.py`，会自动安装依赖、生成 spec 并调用 PyInstaller 打包：
+
 ```bash
-pip install pyinstaller
-pyinstaller --onefile --windowed --name TempNote main.py
-# 输出在 dist/TempNote.exe
+python build.py           # 交互输入版本号（格式 x.x.x，如 1.1.0）
+python build.py 1.1.0     # 直接指定版本号
 ```
+
+- **输出路径：** `dist/v{版本号}/TempNote.exe`（例如 `dist/v1.1.0/TempNote.exe`）
+- **同版本重打包：** 会先删除 `dist/v{版本号}/` 与 `build/pyinstaller/` 缓存，再生成新 exe，避免残留旧文件
+- **管理员权限：** 生成的 exe 启动时会请求 UAC（全局快捷键需要）
+- **中间文件：** `build/`、`dist/` 已在 `.gitignore` 中，无需提交
+
+手动调用 PyInstaller 时也可参考 `build.py` 生成的 `build/TempNote.spec`。
 
 ### 数据存储
 
-所有便签内容和设置保存在 `notes.json`（与 `main.py` / exe 同目录），删除该文件将重置所有数据。
+所有便签内容和设置保存在 `notes.json`（与 `main.py` / exe 同目录）。删除该文件将重置所有数据。
 
 ---
 
@@ -86,58 +113,75 @@ pyinstaller --onefile --windowed --name TempNote main.py
 
 <a name="english"></a>
 
-A Windows desktop sticky note application built with PySide6. Supports Markdown rendering, multiple notes, and rich appearance customization — all accessible via right-click menu.
+A Windows desktop sticky note app built with PySide6. Supports Markdown rendering, multiple notes, and rich appearance customization — all accessible via right-click menu.
 
 ### Download
 
 Head to the [Releases](../../releases) page and download `TempNote.exe`. No Python installation required — just run it.
 
-> Settings and notes are saved to `notes.json` in the same folder as the exe. Copy it along when migrating.
+> Notes and settings are saved to `notes.json` in the same folder as the exe. Copy it along when migrating.
+
+---
 
 ### Features
 
-**Note Management**
-- Multiple note windows open simultaneously
-- Create, rename, show/hide, and delete notes via right-click menu
-- All content and settings are auto-saved and restored on restart
+#### Note Management
 
-**Content Editing**
-- Markdown syntax with a dedicated plain-text editor and live preview
-- Clicking Save closes the editor and updates the preview instantly
+- Multiple note windows open simultaneously, each with independent appearance and content
+- Right-click → Notes list: view all notes with per-note show / hide / delete
+- Right-click → Clear All Notes: wipe everything and start with one fresh note
+- New notes appear to the right of the current note to avoid overlap
+- All content and settings are auto-saved; restored automatically on restart
+- Single-instance: re-launching the app brings the running instance to the front
 
-**Window Management**
-- Frameless window; drag anywhere to move
-- Resize by dragging the bottom-right corner
+#### Content Editing
+
+- GitHub Flavored Markdown (headings, bold, italic, code blocks, links, tables, etc.)
+- **Double-click** the note body to open the Markdown editor with live preview
+- Editor UI follows the system dark/light theme
+- Checklists (`- [ ] task`) are clickable while unlocked; toggling automatically adds or removes strikethrough on the line text
+- Table checklists: a lone checkbox in the first column strikes through the entire row; otherwise only the text within the same cell is struck
+- Markdown table column alignment (`|:---:|`) is respected in both the header and data rows
+
+#### Window Management
+
+- Frameless transparent window; drag anywhere to move
+- All four edges and corners are resizable (drag zone matches the padding size)
 - Always-on-top toggle
-- Minimize support
-- Lock mode: freezes movement and editing, enables mouse passthrough so clicks reach content underneath; `Ctrl + Shift + Right-click` opens the menu while locked
+- **Minimize to tray**: right-click → Minimize to Tray; double-click the tray icon or use tray → Show All Notes to restore
+- **Lock mode**: freezes movement and editing, enables full mouse passthrough to windows below; `Ctrl + Alt + Right-click` opens the menu while locked
 
-**Appearance**
+#### Appearance
 
-All appearance options are in the Appearance Settings window with live preview. Changes apply immediately; Cancel reverts them.
+All options live in the Appearance Settings window with live preview. Cancel reverts all changes.
 
 | Group | Options |
-|-------|---------|
-| Colors | Background color & opacity, text color & opacity (independent) |
-| Font | Family, size, bold, underline |
+|:------|:--------|
+| Colors | Background color & opacity, text color & opacity |
+| Font | Family, size |
 | Spacing | Letter spacing (px), line height (%) |
-| Layout | H-padding, V-padding, text alignment (left / center / right) |
-| Text Effects | Outer glow (adjustable opacity) or stroke (pixel-accurate outline, color & width) — mutually exclusive |
+| Layout | H/V padding, 9-grid alignment (↖ ↑ ↗ ← · → ↙ ↓ ↘) |
+| Text Effects | Glow (color / opacity) or stroke (color / width) — mutually exclusive |
 | Border | Enable/disable, color, width, corner radius |
-| Outer Glow | Soft halo around the window edge — color, radius, strength |
 
-**Other**
-- UI language toggle (中文 / English)
-- Switch, create, rename, or delete notes directly from the right-click menu
+**9-grid alignment:** horizontal controls left / center / right text flow; vertical controls top / middle / bottom within the content area — padding stays fixed when resizing.
+
+---
 
 ### Shortcuts
 
 | Action | How |
-|--------|-----|
+|:-------|:----|
 | Open context menu | Right-click on note |
 | Move note | Left-click drag |
-| Resize note | Drag bottom-right corner |
-| Menu while locked | `Ctrl + Shift + Right-click` |
+| Resize note | Drag any edge or corner |
+| Open Markdown editor | Double-click note body |
+| Menu while locked | `Ctrl + Alt + Right-click` |
+| **Global hotkeys** | |
+| New note | `Ctrl + Alt + N` |
+| Toggle show / hide all notes | `Ctrl + Alt + H` |
+
+---
 
 ### Run from Source
 
@@ -150,11 +194,21 @@ python main.py
 
 ### Build Yourself
 
+**Requirements:** Same as running from source — Python 3.10+.
+
+Use `build.py` in the project root. It installs dependencies, generates the spec file, and invokes PyInstaller:
+
 ```bash
-pip install pyinstaller
-pyinstaller --onefile --windowed --name TempNote main.py
-# Output: dist/TempNote.exe
+python build.py           # prompt for version (x.x.x, e.g. 1.1.0)
+python build.py 1.1.0     # specify version on the command line
 ```
+
+- **Output:** `dist/v{version}/TempNote.exe` (e.g. `dist/v1.1.0/TempNote.exe`)
+- **Rebuild same version:** removes `dist/v{version}/` and the `build/pyinstaller/` cache first, then produces a fresh exe
+- **Admin / UAC:** the built exe requests elevation on launch (required for global hotkeys)
+- **Generated dirs:** `build/` and `dist/` are gitignored — no need to commit them
+
+For manual PyInstaller runs, see the generated `build/TempNote.spec`.
 
 ### Data Storage
 
