@@ -32,13 +32,10 @@
 - 支持 GitHub Flavored Markdown（标题、粗体、斜体、代码块、链接、表格等）
 - **双击**便签正文直接打开 Markdown 编辑器，输入时实时预览
 - 编辑器界面跟随系统深色/浅色主题
-- Checklist（`- [ ] 任务`）在解锁状态下可直接点击勾选，自动对后续文字添加/移除删除线
-- 表格中的 Checklist 同样支持点击，首列纯 Checkbox 勾选时整行划线；其他情况仅对格内文字划线
-- Markdown 表格支持列对齐标记（`|:---:|`），表头与数据行均生效
 
 #### 窗口管理
 
-- 无边框透明窗口，左键拖动任意位置移动
+- 左键拖动任意位置移动
 - 四边及四角均可拖动调整窗口大小，调整区域与页边距一致
 - 支持始终置顶开关
 - **最小化到系统托盘**：右键 → 最小化到托盘；双击托盘图标或托盘右键 → 显示全部便签
@@ -47,17 +44,6 @@
 #### 外观定制
 
 所有外观选项集中在"外观设置"窗口，修改后实时预览，点击保存生效，取消还原。
-
-| 分组 | 选项 |
-|:-----|:-----|
-| 颜色 | 背景颜色与透明度、文字颜色与透明度 |
-| 字体 | 字体族、字号 |
-| 间距 | 字间距（px）、行距（%） |
-| 布局 | 水平/垂直页边距、九宫格对齐（↖ ↑ ↗ ← · → ↙ ↓ ↘） |
-| 文字效果 | 外发光（颜色/透明度）或文字描边（颜色/宽度），二者互斥 |
-| 边框 | 启用/禁用、颜色、宽度、圆角半径 |
-
-**九宫格对齐说明：** 水平方向控制文字左/居中/右对齐，垂直方向控制内容在文字区顶/中/底部显示，页边距始终保持固定。
 
 ---
 
@@ -139,13 +125,10 @@ Head to the [Releases](../../releases) page and download `TempNote.exe`. No Pyth
 - GitHub Flavored Markdown (headings, bold, italic, code blocks, links, tables, etc.)
 - **Double-click** the note body to open the Markdown editor with live preview
 - Editor UI follows the system dark/light theme
-- Checklists (`- [ ] task`) are clickable while unlocked; toggling automatically adds or removes strikethrough on the line text
-- Table checklists: a lone checkbox in the first column strikes through the entire row; otherwise only the text within the same cell is struck
-- Markdown table column alignment (`|:---:|`) is respected in both the header and data rows
 
 #### Window Management
 
-- Frameless transparent window; drag anywhere to move
+- Drag anywhere to move
 - All four edges and corners are resizable (drag zone matches the padding size)
 - Always-on-top toggle
 - **Minimize to tray**: right-click → Minimize to Tray; double-click the tray icon or use tray → Show All Notes to restore
@@ -154,17 +137,6 @@ Head to the [Releases](../../releases) page and download `TempNote.exe`. No Pyth
 #### Appearance
 
 All options live in the Appearance Settings window with live preview. Cancel reverts all changes.
-
-| Group | Options |
-|:------|:--------|
-| Colors | Background color & opacity, text color & opacity |
-| Font | Family, size |
-| Spacing | Letter spacing (px), line height (%) |
-| Layout | H/V padding, 9-grid alignment (↖ ↑ ↗ ← · → ↙ ↓ ↘) |
-| Text Effects | Glow (color / opacity) or stroke (color / width) — mutually exclusive |
-| Border | Enable/disable, color, width, corner radius |
-
-**9-grid alignment:** horizontal controls left / center / right text flow; vertical controls top / middle / bottom within the content area — padding stays fixed when resizing.
 
 ---
 
