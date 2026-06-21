@@ -36,7 +36,7 @@
 
 #### 窗口管理
 
-- 无边框透明窗口，左键拖动任意位置移动
+- 左键拖动任意位置移动
 - 四边及四角均可拖动调整窗口大小，调整区域与页边距一致
 - 支持始终置顶开关
 - **最小化到系统托盘**：右键 → 最小化到托盘；双击托盘图标或托盘右键 → 显示全部便签
@@ -133,7 +133,7 @@ Head to the [Releases](../../releases) page and download `TempNote.exe`. No Pyth
 
 #### Window Management
 
-- Frameless transparent window; drag anywhere to move
+- Drag anywhere to move
 - All four edges and corners are resizable (drag zone matches the padding size)
 - Always-on-top toggle
 - **Minimize to tray**: right-click → Minimize to Tray; double-click the tray icon or use tray → Show All Notes to restore
