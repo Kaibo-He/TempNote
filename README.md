@@ -4,8 +4,6 @@
 
 ---
 
-## 中文
-
 一款基于 PySide6 的 Windows 桌面便签应用，支持 Markdown 渲染、多便签管理，可通过设置调整语言与外观，所有功能均通过右键菜单访问。
 
 ### 下载
@@ -100,8 +98,6 @@ python build.py 1.1.0     # 直接指定版本号
 迁移数据：将 `notes.json` 与 `attachments/` 复制到新环境程序同目录下即可。
 
 ---
-
-## English
 
 <a name="english"></a>
 
