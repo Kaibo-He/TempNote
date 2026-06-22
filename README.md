@@ -12,7 +12,7 @@
 
 前往 [Releases](../../releases) 页面下载 `TempNote.exe`，无需安装 Python，直接运行。
 
-> 数据文件 `notes.json` 会在 exe 同目录下自动生成，迁移时一并复制即可。
+> 首次运行自动生成 `notes.json` 与 `attachments/`；迁移数据见下方「数据存储」。
 
 ---
 
@@ -20,19 +20,16 @@
 
 #### 便签管理
 
-- 同时显示多个便签窗口，每个便签独立设置外观与内容
-- 右键菜单 → 便签列表：查看全部便签，支持单独显示/隐藏/删除
-- 右键菜单 → 清空所有便签：一键清空并创建新的空白便签
-- 新建便签自动出现在当前便签右侧，避免重叠
-- 所有内容与设置实时自动保存，重启后自动恢复
-- 单实例运行：重复启动时自动唤起已运行的程序
+- 多便签并行，内容与外观各自独立
+- 右键菜单：便签列表（显示/隐藏/删除）、清空便签、清空所有便签
+- 新建便签出现在当前便签右侧；自动保存并在重启后恢复；单实例运行
 
 #### 内容编辑
 
-- 支持 GitHub Flavored Markdown
+- 支持 GitHub Flavored Markdown；部分常用 HTML 标签亦可渲染（非完整 HTML，复杂用法不保证有效），不可与 Markdown 混用
 - **双击**便签正文直接打开 Markdown 编辑器，输入时实时预览
 - 编辑器界面跟随系统深色/浅色主题
-- **拖入图片**：在编辑器中将本地图片文件拖入即可插入（支持 PNG、JPG、GIF、BMP、WebP、SVG、ICO）。图片会复制到程序目录下的 `attachments/`，并插入 `![描述](attachments/xxx.png)` 语法；便签中随窗口宽度自动缩放显示。删除便签内容里不再引用的图片时，会自动清理对应附件
+- **拖入图片**：在编辑器中将本地图片文件拖入即可插入（支持 PNG、JPG、GIF、BMP、WebP、SVG、ICO），复制到 `attachments/` 并以 `![描述](attachments/xxx.png)` 引用；便签中随窗口宽度自动缩放显示
 
 #### 窗口管理
 
@@ -40,7 +37,7 @@
 - 四边及四角均可拖动调整窗口大小，调整区域与页边距一致
 - 支持始终置顶开关
 - **最小化到系统托盘**：右键 → 最小化到托盘；双击托盘图标或托盘右键 → 显示全部便签
-- **锁定模式**：锁定后窗口不可移动、文字不可编辑，鼠标完全穿透至下层窗口；`Ctrl + Alt + 右键` 可在锁定状态下打开菜单
+- **锁定模式**：锁定后窗口不可移动、文字不可编辑，鼠标完全穿透至下层窗口；`Ctrl + Alt + 右键` 可在锁定状态下打开菜单（单张便签）
 
 #### 设置
 
@@ -62,7 +59,8 @@
 | 锁定状态下打开菜单 | `Ctrl + Alt + 右键` |
 | **全局快捷键** | |
 | 新建便签 | `Ctrl + Alt + N` |
-| 显示/隐藏全部便签（切换） | `Ctrl + Alt + H` |
+| 显示/最小化全部便签 | `Ctrl + Alt + H` |
+| 锁定/解锁全部便签 | `Ctrl + Alt + L` |
 
 ---
 
@@ -88,18 +86,18 @@ python build.py 1.1.0     # 直接指定版本号
 
 - **输出路径：** `dist/v{版本号}/TempNote.exe`（例如 `dist/v1.1.0/TempNote.exe`）
 - **同版本重打包：** 会先删除 `dist/v{版本号}/` 与 `build/pyinstaller/` 缓存，再生成新 exe，避免残留旧文件
-- **管理员权限：** 默认无需 UAC；若全局快捷键无效，可尝试以管理员身份运行
+- **管理员权限：** 默认以管理员身份运行（启动时 UAC 提权），全局快捷键需此权限
 - **中间文件：** `build/`、`dist/` 已在 `.gitignore` 中，无需提交
 
 手动调用 PyInstaller 时也可参考 `build.py` 生成的 `build/TempNote.spec`。
 
 ### 数据存储
 
-所有便签内容和设置保存在 `notes.json`（与 `main.py` / exe 同目录）。
+- `notes.json` — 便签内容与设置，自动保存，与程序同目录
+- `attachments/` — 图片相对路径引用、迁移时需一并复制
+- 清理与重置 — 未引用图片保存时自动清理；删除 `notes.json` 重置全部数据
 
-编辑器插入的图片保存在同目录下的 `attachments/` 文件夹；便签正文中以相对路径引用，例如 `![描述](attachments/abc123.png)`。迁移数据时请一并复制 `notes.json` 与 `attachments/` 文件夹。
-
-删除 `notes.json` 将重置所有数据；`attachments/` 中未被任何便签引用的图片会在保存时自动清理。
+迁移数据：将 `notes.json` 与 `attachments/` 复制到新环境程序同目录下即可。
 
 ---
 
@@ -113,7 +111,7 @@ A Windows desktop sticky note app built with PySide6. Supports Markdown renderin
 
 Head to the [Releases](../../releases) page and download `TempNote.exe`. No Python installation required — just run it.
 
-> Notes and settings are saved to `notes.json` in the same folder as the exe. Copy it along when migrating.
+> Created automatically on first run; see **Data Storage** below for migration.
 
 ---
 
@@ -121,19 +119,16 @@ Head to the [Releases](../../releases) page and download `TempNote.exe`. No Pyth
 
 #### Note Management
 
-- Multiple note windows open simultaneously, each with independent appearance and content
-- Right-click → Notes list: view all notes with per-note show / hide / delete
-- Right-click → Clear All Notes: wipe everything and start with one fresh note
-- New notes appear to the right of the current note to avoid overlap
-- All content and settings are auto-saved; restored automatically on restart
-- Single-instance: re-launching the app brings the running instance to the front
+- Multiple notes with independent content and appearance
+- Right-click menu: notes list (show / hide / delete), clear note, clear all notes
+- New notes open beside the current one; auto-save and restore on restart; single-instance
 
 #### Content Editing
 
-- GitHub Flavored Markdown
+- GitHub Flavored Markdown; some common HTML tags also render (not a full HTML engine — complex usage not guaranteed), not mixable with Markdown
 - **Double-click** the note body to open the Markdown editor with live preview
 - Editor UI follows the system dark/light theme
-- **Drag & drop images**: drop a local image file into the editor to insert it (PNG, JPG, GIF, BMP, WebP, SVG, ICO). The file is copied to `attachments/` next to the app and inserted as `![alt](attachments/xxx.png)`; images scale to the note width. Unreferenced files in `attachments/` are cleaned up when notes are saved
+- **Drag & drop images**: drop a local image file into the editor to insert it (PNG, JPG, GIF, BMP, WebP, SVG, ICO); copied to `attachments/` and referenced as `![alt](attachments/xxx.png)`; images scale to the note width
 
 #### Window Management
 
@@ -141,7 +136,7 @@ Head to the [Releases](../../releases) page and download `TempNote.exe`. No Pyth
 - All four edges and corners are resizable (drag zone matches the padding size)
 - Always-on-top toggle
 - **Minimize to tray**: right-click → Minimize to Tray; double-click the tray icon or use tray → Show All Notes to restore
-- **Lock mode**: freezes movement and editing, enables full mouse passthrough to windows below; `Ctrl + Alt + Right-click` opens the menu while locked
+- **Lock mode**: freezes movement and editing, enables full mouse passthrough to windows below; `Ctrl + Alt + Right-click` opens the menu while locked (per note)
 
 #### Settings
 
@@ -163,7 +158,8 @@ Right-click → **Settings…** opens the settings window with live preview; **S
 | Menu while locked | `Ctrl + Alt + Right-click` |
 | **Global hotkeys** | |
 | New note | `Ctrl + Alt + N` |
-| Toggle show / hide all notes | `Ctrl + Alt + H` |
+| Toggle show all notes / minimize to tray | `Ctrl + Alt + H` |
+| Lock / unlock all notes | `Ctrl + Alt + L` |
 
 ---
 
@@ -189,15 +185,15 @@ python build.py 1.1.0     # specify version on the command line
 
 - **Output:** `dist/v{version}/TempNote.exe` (e.g. `dist/v1.1.0/TempNote.exe`)
 - **Rebuild same version:** removes `dist/v{version}/` and the `build/pyinstaller/` cache first, then produces a fresh exe
-- **Admin / UAC:** not required by default; if global hotkeys fail, try Run as administrator
+- **Admin / UAC:** runs as administrator by default (UAC prompt on launch); required for global hotkeys
 - **Generated dirs:** `build/` and `dist/` are gitignored — no need to commit them
 
 For manual PyInstaller runs, see the generated `build/TempNote.spec`.
 
 ### Data Storage
 
-All notes and settings are saved in `notes.json` next to `main.py` or the exe.
+- `notes.json` — note content and settings; auto-saved in the same folder as the app
+- `attachments/` — images referenced by relative paths; copy together when migrating
+- Cleanup & reset — unreferenced images removed on save; deleting `notes.json` resets all data
 
-Images inserted in the editor are stored in the `attachments/` folder in the same directory; note content references them with relative paths, e.g. `![alt](attachments/abc123.png)`. When migrating, copy both `notes.json` and the `attachments/` folder together.
-
-Deleting `notes.json` resets everything; orphaned files in `attachments/` are removed automatically when notes are saved.
+To migrate: copy `notes.json` and `attachments/` to the same folder as the app on the new machine.

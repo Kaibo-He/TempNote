@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """打包 TempNote 为 exe，输出到 dist/v{version}/TempNote.exe
 
-默认不要求管理员权限；若全局快捷键无效，可右键 exe → 以管理员身份运行。
+默认以管理员权限运行（启动时弹出 UAC），以便全局快捷键正常工作。
 重新打包同一版本时会先删除 dist/v{version}/ 与 PyInstaller 缓存，再生成新 exe。
 
 用法:
@@ -85,7 +85,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    uac_admin=False,
+    uac_admin=True,
 )
 """ % main_py,
         encoding="utf-8",

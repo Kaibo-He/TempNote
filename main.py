@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (
     QApplication, QTextEdit, QWidget, QVBoxLayout, QMenu, QColorDialog,
     QInputDialog, QWidgetAction, QSlider, QHBoxLayout,
     QLabel, QGraphicsDropShadowEffect, QPushButton,
-    QCheckBox, QSpinBox, QFontComboBox, QScrollArea, QGroupBox, QButtonGroup,
+    QCheckBox, QFontComboBox, QScrollArea, QGroupBox, QButtonGroup,
     QRadioButton,
     QSystemTrayIcon, QGridLayout, QMessageBox, QDialogButtonBox,
 )
@@ -30,7 +30,7 @@ from PySide6.QtGui import (
     QColor, QFont, QAction, QPainter, QPen, QPixmap, QIcon, QBrush,
     QTextCharFormat, QTextCursor, QTextBlockFormat, QTextDocument,
     QTextImageFormat, QPolygonF, QDragEnterEvent, QDropEvent, QImage,
-    QDesktopServices,
+    QDesktopServices, QCursor,
 )
 
 
@@ -704,7 +704,7 @@ def _fmt_id_from_markers(markers: list[tuple[str, str]]) -> str:
 STRINGS: dict[str, dict[str, str]] = {
     "zh": {
         # 右键菜单
-        "rename_note":     "重命名便签…",
+        "rename_note":     "便签更名…",
         "hide_current_note": "隐藏便签",
         "new_note":        "新建便签",
         "note_default_name": "便签 {n}",
@@ -714,6 +714,8 @@ STRINGS: dict[str, dict[str, str]] = {
         "note_hide":       "隐藏",
         "note_delete":     "删除",
         "edit_md":         "编辑便签…",
+        "clear_current_note": "清空便签…",
+        "clear_current_note_prompt": "确认清空「{name}」的内容？标题与外观设置将保留。",
         "content_placeholder": "双击以编辑，支持 Markdown 格式 ...",
         "delete_current_note": "删除便签…",
         "settings":          "设置…",
@@ -737,7 +739,7 @@ STRINGS: dict[str, dict[str, str]] = {
 
 ## 编辑器操作
 
-- 支持 GitHub Flavored Markdown，输入实时预览
+- 支持 GitHub Flavored Markdown，输入实时预览；部分常用 HTML 标签亦可渲染（非完整 HTML），不可与 Markdown 混用
 - **拖入图片**：在编辑器中将本地图片文件拖入即可插入（支持 PNG、JPG、GIF、BMP、WebP、SVG、ICO）
 
 ---
@@ -749,7 +751,8 @@ STRINGS: dict[str, dict[str, str]] = {
 | 置顶 / 锁定 | 切换开关 |
 | 新建便签 | 在当前便签旁创建 |
 | 编辑便签… | 打开 Markdown 编辑器 |
-| 删除 / 重命名 / 隐藏便签 | — |
+| 清空便签… | 清空当前便签内容，保留标题与外观 |
+| 删除 / 便签更名 / 隐藏便签 | — |
 | 便签列表 | 查看全部，单独显示 / 隐藏 / 删除 |
 | 使用说明 | 本窗口 |
 | 设置… | 语言与外观 |
@@ -759,7 +762,7 @@ STRINGS: dict[str, dict[str, str]] = {
 
 ## 多便签管理
 
-- **隐藏便签**：隐藏当前便签（仅剩一个便签时不可用）
+- **隐藏便签**：隐藏当前便签（仅剩一个便签可见时不可用）
 - **✓ 前缀**：便签列表中，表示该便签当前可见
 
 ---
@@ -788,7 +791,8 @@ STRINGS: dict[str, dict[str, str]] = {
 | 快捷键 | 说明 |
 |:-------|:-----|
 | Ctrl + Alt + N | 新建便签 |
-| Ctrl + Alt + H | 显示 / 隐藏全部便签（切换） |
+| Ctrl + Alt + H | 显示 / 最小化全部便签 |
+| Ctrl + Alt + L | 同时锁定 / 解锁全部便签 |
 
 ---
 
@@ -801,12 +805,13 @@ STRINGS: dict[str, dict[str, str]] = {
 
 ---
 
-## 数据
+## 数据存储
 
-| 项目 | 说明 |
-|:-----|:-----|
-| 图片 | 保存至 `attachments/` 文件夹 |
-| 内容与设置 | 自动保存至 `notes.json`（与程序同目录） |
+- `notes.json` — 便签内容与设置，自动保存，与程序同目录
+- `attachments/` — 图片相对路径引用、迁移时需一并复制
+- 清理与重置 — 未引用图片保存时自动清理；删除 `notes.json` 重置全部数据
+
+迁移数据：将 `notes.json` 与 `attachments/` 复制到新环境程序同目录下即可。
 """,
         "close":           "关闭",
         "clear_notes":     "清空所有便签…",
@@ -815,7 +820,7 @@ STRINGS: dict[str, dict[str, str]] = {
         "tray_show_all":   "显示全部便签",
         "tray_tooltip":    "TempNote — 双击恢复便签",
         # 对话框
-        "rename_title":    "重命名便签",
+        "rename_title":    "便签更名",
         "rename_prompt":   "请输入便签名称：",
         "delete_title":    "删除便签",
         "delete_prompt":   "确认删除「{name}」？",
@@ -826,6 +831,10 @@ STRINGS: dict[str, dict[str, str]] = {
         "font_group":      "字体",
         "font_lbl":        "字体",
         "size_lbl":        "字号",
+        "weight_lbl":      "字重",
+        "weight_light":    "细",
+        "weight_normal":   "正常",
+        "weight_bold":     "粗",
         "spacing_group":   "间距",
         "l_spacing":       "字间距",
         "ln_spacing":      "行  距",
@@ -878,6 +887,8 @@ STRINGS: dict[str, dict[str, str]] = {
         "note_hide":       "Hide",
         "note_delete":     "Delete",
         "edit_md":         "Edit Note…",
+        "clear_current_note": "Clear Note…",
+        "clear_current_note_prompt": 'Clear content of "{name}"? Title and appearance settings will be kept.',
         "content_placeholder": "Double-click to edit ...",
         "delete_current_note": "Delete Note…",
         "settings":          "Settings…",
@@ -901,7 +912,7 @@ STRINGS: dict[str, dict[str, str]] = {
 
 ## Editor
 
-- GitHub Flavored Markdown supported, live preview while typing
+- GitHub Flavored Markdown supported, live preview while typing; some common HTML tags also render (not a full HTML engine), not mixable with Markdown
 - **Drag & drop images**: drop a local image file into the editor to insert (PNG, JPG, GIF, BMP, WebP, SVG, ICO)
 
 ---
@@ -913,6 +924,7 @@ STRINGS: dict[str, dict[str, str]] = {
 | Always on Top / Lock | Toggle switches |
 | New Note | Create beside current note |
 | Edit Note… | Open Markdown editor |
+| Clear Note… | Clear current note content; keep title and appearance |
 | Delete / Rename / Hide Note | — |
 | Notes | View all; show / hide / delete individually |
 | User Guide | This window |
@@ -923,7 +935,7 @@ STRINGS: dict[str, dict[str, str]] = {
 
 ## Multiple Notes
 
-- **Hide Note**: hide current note (disabled when only one remains)
+- **Hide Note**: hide current note (disabled when only one note is visible)
 - **✓ prefix**: in the note list, indicates a visible note
 
 ---
@@ -952,7 +964,8 @@ While locked, the note cannot move or edit; mouse passes through to windows belo
 | Hotkey | Description |
 |:-------|:------------|
 | Ctrl + Alt + N | New note |
-| Ctrl + Alt + H | Toggle show / hide all notes |
+| Ctrl + Alt + H | Toggle show all notes / minimize to tray |
+| Ctrl + Alt + L | Lock / unlock all notes at once |
 
 ---
 
@@ -965,12 +978,13 @@ While locked, the note cannot move or edit; mouse passes through to windows belo
 
 ---
 
-## Data
+## Data Storage
 
-| Item | Description |
-|:-----|:------------|
-| Images | Saved to `attachments/` folder |
-| Content & settings | Auto-saved to `notes.json` (same folder as the app) |
+- `notes.json` — note content and settings; auto-saved in the same folder as the app
+- `attachments/` — images referenced by relative paths; copy together when migrating
+- Cleanup & reset — unreferenced images removed on save; deleting `notes.json` resets all data
+
+To migrate: copy `notes.json` and `attachments/` to the same folder as the app on the new machine.
 """,
         "close":           "Close",
         "clear_notes":     "Clear All Notes…",
@@ -989,6 +1003,10 @@ While locked, the note cannot move or edit; mouse passes through to windows belo
         "font_group":      "Font",
         "font_lbl":        "Font",
         "size_lbl":        "Size",
+        "weight_lbl":      "Weight",
+        "weight_light":    "Light",
+        "weight_normal":   "Normal",
+        "weight_bold":     "Bold",
         "spacing_group":   "Spacing",
         "l_spacing":       "Letters",
         "ln_spacing":      "Lines",
@@ -1085,7 +1103,7 @@ class _WinMsg(ctypes.Structure):
 
 APPEARANCE_KEYS = [
     "bg_opacity", "text_opacity", "bg_color", "text_color",
-    "font_family", "font_size",
+    "font_family", "font_size", "font_weight",
     "letter_spacing", "line_spacing",
     "glow_enabled", "glow_color", "glow_opacity",
     "stroke_enabled", "stroke_color", "stroke_width",
@@ -1101,7 +1119,7 @@ DEFAULT_SETTINGS = {
     "always_on_top": True,
     "bg_opacity": 50,  "text_opacity": 100,
     "bg_color": "#000000", "text_color": "#FFFFFF",
-    "font_family": "Microsoft YaHei", "font_size": 12,
+    "font_family": "Microsoft YaHei", "font_size": 12, "font_weight": 400,
     "letter_spacing": 0, "line_spacing": 100,
     "glow_enabled": True, "glow_color": "#FFFF00", "glow_opacity": 100,
     "stroke_enabled": False, "stroke_color": "#55007f", "stroke_width": 2,
@@ -1119,7 +1137,37 @@ DEFAULT_SETTINGS = {
 
 ROOT_DEFAULTS = {
     "language": "zh",
+    "data_version": 3,
 }
+
+# 细 / 正常 / 粗 → QFont weight（多数字体至少能区分这三档）
+FONT_WEIGHT_TIERS = (100, 400, 700)
+_FONT_TIER_LABEL_KEYS = ("weight_light", "weight_normal", "weight_bold")
+
+
+def _snap_font_weight(weight: int) -> int:
+    w = int(weight)
+    return min(FONT_WEIGHT_TIERS, key=lambda step: abs(step - w))
+
+
+def _font_weight_tier_label(tier_index: int) -> str:
+    return t(_FONT_TIER_LABEL_KEYS[tier_index])
+
+
+def _bold_weight_for_base(base: int) -> int:
+    idx = FONT_WEIGHT_TIERS.index(_snap_font_weight(base))
+    return FONT_WEIGHT_TIERS[min(idx + 1, len(FONT_WEIGHT_TIERS) - 1)]
+
+
+def _font_weight_value(settings: dict) -> QFont.Weight:
+    return QFont.Weight(_snap_font_weight(settings.get("font_weight", 400)))
+
+
+def _note_font(settings: dict) -> QFont:
+    font = QFont(settings.get("font_family", "Microsoft YaHei"),
+                 int(settings.get("font_size", 12)))
+    font.setWeight(_font_weight_value(settings))
+    return font
 
 
 # ──────────────────────────────────────────────────────────
@@ -1783,24 +1831,62 @@ class AppearanceDialog(QWidget):
 
         font_combo.currentFontChanged.connect(on_font)
 
-        size_spin = QSpinBox()
-        size_spin.setRange(6, 72)
-        size_spin.setValue(int(self._note.settings.get("font_size", 13)))
-        self._refreshers.append(
-            lambda s=size_spin: s.setValue(int(self._note.settings.get("font_size", 13)))
-        )
-
-        def on_size(v):
-            self._note.settings["font_size"] = v
-            apply()
-
-        size_spin.valueChanged.connect(on_size)
-
         h1.addWidget(self._i18n_label("font_lbl"))
         h1.addWidget(font_combo, 1)
-        h1.addWidget(self._i18n_label("size_lbl"))
-        h1.addWidget(size_spin)
         vb.addWidget(row1)
+
+        row_size = QWidget()
+        h_size = QHBoxLayout(row_size)
+        h_size.setContentsMargins(0, 0, 0, 0)
+        h_size.setSpacing(8)
+        size_sl_w, _ = self._slider_row("font_size", 6, 72, "px", apply)
+        h_size.addWidget(self._i18n_label("size_lbl", 54))
+        h_size.addWidget(size_sl_w, 1)
+        vb.addWidget(row_size)
+
+        row2 = QWidget()
+        h2 = QHBoxLayout(row2)
+        h2.setContentsMargins(0, 0, 0, 0)
+        h2.setSpacing(8)
+
+        weight_sl = QSlider(Qt.Orientation.Horizontal)
+        weight_sl.setRange(0, len(FONT_WEIGHT_TIERS) - 1)
+        weight_sl.setPageStep(1)
+        weight_sl.setSingleStep(1)
+        weight_sl.setTickPosition(QSlider.TickPosition.TicksBelow)
+        weight_sl.setTickInterval(1)
+
+        current_weight = _snap_font_weight(
+            int(self._note.settings.get("font_weight", 400))
+        )
+        tier_idx = FONT_WEIGHT_TIERS.index(current_weight)
+        weight_sl.setValue(tier_idx)
+        weight_val = QLabel(_font_weight_tier_label(tier_idx))
+        weight_val.setFixedWidth(52)
+        weight_val.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+
+        def _refresh_weight(sl=weight_sl, lbl=weight_val):
+            w = _snap_font_weight(int(self._note.settings.get("font_weight", 400)))
+            idx = FONT_WEIGHT_TIERS.index(w)
+            sl.setValue(idx)
+            lbl.setText(_font_weight_tier_label(idx))
+
+        self._refreshers.append(_refresh_weight)
+        self._reg_i18n(lambda lbl=weight_val, sl=weight_sl: lbl.setText(
+            _font_weight_tier_label(sl.value())
+        ))
+
+        def _on_weight(idx: int, lbl=weight_val):
+            w = FONT_WEIGHT_TIERS[idx]
+            lbl.setText(_font_weight_tier_label(idx))
+            self._note.settings["font_weight"] = w
+            apply()
+
+        weight_sl.valueChanged.connect(_on_weight)
+        h2.addWidget(self._i18n_label("weight_lbl", 54))
+        h2.addWidget(weight_sl, 1)
+        h2.addWidget(weight_val)
+        vb.addWidget(row2)
 
         return group
 
@@ -2348,18 +2434,24 @@ class NoteWindow(QWidget):
                 it += 1
             block = block.next()
 
+    def _has_visible_content(self) -> bool:
+        return bool(self.settings.get("content", "").strip())
+
     def _apply_vertical_align(self):
         """在文字区内部用根框架 topMargin 实现垂直对齐，不改动布局边距。"""
-        raw = self.settings.get("text_align", "top-left")
-        parts = raw.split("-")
-        v_part = parts[0] if len(parts) == 2 else "top"
-
         doc = self.editor.document()
 
-        # 先清零 topMargin，再测量内容原始高度
         fmt = doc.rootFrame().frameFormat()
         fmt.setTopMargin(0.0)
         doc.rootFrame().setFrameFormat(fmt)
+
+        # 空便签仅显示 placeholder，rootFrame 偏移会导致 hint 被裁切
+        if not self._has_visible_content():
+            return
+
+        raw = self.settings.get("text_align", "top-left")
+        parts = raw.split("-")
+        v_part = parts[0] if len(parts) == 2 else "top"
 
         if v_part == "top":
             return
@@ -2403,9 +2495,9 @@ class NoteWindow(QWidget):
             self.render_content(self.settings.get("content", ""))
 
     def _apply_font(self):
-        s = self.settings
-        font = QFont(s["font_family"], s["font_size"])
+        font = _note_font(self.settings)
         self.editor.setFont(font)
+        self.editor.document().setDefaultFont(font)
         if self._initialized:
             self.render_content(self.settings.get("content", ""))
 
@@ -2457,18 +2549,25 @@ class NoteWindow(QWidget):
     def render_content(self, content: str, *, skip_normalize: bool = False):
         if not content.strip():
             self.editor.clear()
+            if self._initialized:
+                QTimer.singleShot(0, self._apply_vertical_align)
             return
         if not skip_normalize:
             content = normalize_content_formats(content)
         stripped, inline_spans = _parse_inline_style_tags(content)
         display = self._preprocess_md(_prepare_markdown_for_display(stripped))
+        s = self.settings
         doc = self.editor.document()
+        md_font = QFont(s.get("font_family", "Microsoft YaHei"),
+                        int(s.get("font_size", 12)))
+        md_font.setWeight(QFont.Weight.Normal)
+        doc.setDefaultFont(md_font)
+        self.editor.setFont(md_font)
         doc.setBaseUrl(QUrl.fromLocalFile(_app_dir + os.sep))
         doc.setMarkdown(
             display,
             QTextDocument.MarkdownFeature.MarkdownDialectGitHub,
         )
-        s = self.settings
         text = QColor(s["text_color"])
         text.setAlpha(round(s["text_opacity"] / 100 * 255))
         char_fmt = QTextCharFormat()
@@ -2479,12 +2578,42 @@ class NoteWindow(QWidget):
         cursor.clearSelection()
         cursor.movePosition(QTextCursor.MoveOperation.Start)
         self.editor.setTextCursor(cursor)
+        self._apply_document_font_weights()
         self._apply_inline_styles(inline_spans)
         self._apply_spacing()
         self._apply_link_style()
         self._apply_table_column_alignments(content)
         self._apply_image_scaling()
         QTimer.singleShot(0, self._apply_vertical_align)
+
+    def _apply_document_font_weights(self):
+        """按便签字重设置正文，Markdown 粗体相对抬高一档（至少不低于解析结果）。"""
+        base = _snap_font_weight(int(self.settings.get("font_weight", 400)))
+        bold_target = _bold_weight_for_base(base)
+        md_ref = QFont.Weight.Normal
+        doc = self.editor.document()
+        cursor = QTextCursor(doc)
+        block = doc.begin()
+        while block.isValid():
+            it = block.begin()
+            while not it.atEnd():
+                frag = it.fragment()
+                if frag.isValid():
+                    fw = frag.charFormat().fontWeight()
+                    fmt = QTextCharFormat()
+                    if fw > md_ref:
+                        w = max(int(fw), bold_target)
+                        fmt.setFontWeight(QFont.Weight(min(FONT_WEIGHT_TIERS[-1], w)))
+                    else:
+                        fmt.setFontWeight(QFont.Weight(base))
+                    cursor.setPosition(frag.position())
+                    cursor.setPosition(
+                        frag.position() + frag.length(),
+                        QTextCursor.MoveMode.KeepAnchor,
+                    )
+                    cursor.mergeCharFormat(fmt)
+                it += 1
+            block = block.next()
 
     def _apply_spacing(self):
         s = self.settings
@@ -2855,6 +2984,12 @@ class NoteWindow(QWidget):
         act_edit.triggered.connect(self._open_md_editor)
         menu.addAction(act_edit)
 
+        act_clear_note = QAction(t("clear_current_note"), self)
+        act_clear_note.triggered.connect(self._clear_current_note)
+        if not self.settings.get("content", "").strip():
+            act_clear_note.setEnabled(False)
+        menu.addAction(act_clear_note)
+
         act_del = QAction(t("delete_current_note"), self)
         act_del.triggered.connect(self._delete_current_note)
         menu.addAction(act_del)
@@ -2865,8 +3000,7 @@ class NoteWindow(QWidget):
 
         act_hide = QAction(t("hide_current_note"), self)
         act_hide.triggered.connect(self._hide_current_note)
-        notes = self._manager.notes()
-        if len(notes) <= 1 and self.settings.get("visible", True):
+        if not self._manager.can_hide_note(self._note_id):
             act_hide.setEnabled(False)
         menu.addAction(act_hide)
 
@@ -2903,6 +3037,8 @@ class NoteWindow(QWidget):
 
                 vis_label = t("note_hide") if is_visible else t("note_show")
                 act_vis = QAction(vis_label, sub)
+                if is_visible and not self._manager.can_hide_note(nid):
+                    act_vis.setEnabled(False)
                 act_vis.triggered.connect(_make_toggle(nid, is_visible))
                 sub.addAction(act_vis)
 
@@ -2943,6 +3079,22 @@ class NoteWindow(QWidget):
         menu.exec(global_pos)
 
     # ── 菜单动作 ──────────────────────────────────────────
+
+    def _clear_current_note(self):
+        name = self.settings.get("name", "")
+        title = t("clear_current_note").rstrip("…").rstrip("...")
+        if not _ask_yes_no(
+            self,
+            title,
+            t("clear_current_note_prompt").format(name=name),
+        ):
+            return
+        self.settings["content"] = DEFAULT_SETTINGS["content"]
+        if self._md_editor is not None:
+            self._md_editor.src.setPlainText("")
+        self._manager.save()
+        self.render_content("")
+        _cleanup_orphan_attachments(self._manager.notes())
 
     def _rename_note(self):
         dlg = QInputDialog(self)
@@ -3004,11 +3156,10 @@ class NoteWindow(QWidget):
         rbtn = ctypes.windll.user32.GetKeyState(0x02) & 0x8000
         if ctrl and alt and rbtn:
             if not self._lock_menu_active:
-                pt = ctypes.wintypes.POINT()
-                ctypes.windll.user32.GetCursorPos(ctypes.byref(pt))
-                if self.geometry().contains(QPoint(pt.x, pt.y)):
+                pos = QCursor.pos()
+                if self.frameGeometry().contains(pos):
                     self._lock_menu_active = True
-                    self.show_context_menu(QPoint(pt.x, pt.y))
+                    self.show_context_menu(pos)
         else:
             self._lock_menu_active = False
 
@@ -3103,12 +3254,14 @@ class HotkeyListener(QWidget):
 
     快捷键：
         Ctrl+Alt+N  新建便签
-        Ctrl+Alt+H  显示/隐藏全部便签（切换）
+        Ctrl+Alt+H  显示/最小化全部便签
+        Ctrl+Alt+L  同时锁定/解锁全部便签
     """
 
     _MOD_ALT = 0x0001
     _MOD_CONTROL = 0x0002
     _WM_HOTKEY = 0x0312
+    _VK_L = 0x4C
 
     # 热键 ID → (修饰键, 虚拟键码)
     _HOTKEYS: dict[int, tuple[int, int]] = {
@@ -3120,6 +3273,10 @@ class HotkeyListener(QWidget):
         super().__init__()
         self._manager = manager
         self._hwnd: int | None = None
+        self._lock_combo_down = False
+        self._lock_poll = QTimer(self)
+        self._lock_poll.setInterval(50)
+        self._lock_poll.timeout.connect(self._poll_lock_hotkey)
         # 不显示在任务栏，1×1 窗口放在屏幕外
         self.setWindowFlags(Qt.WindowType.Tool | Qt.WindowType.FramelessWindowHint)
         self.resize(1, 1)
@@ -3131,13 +3288,25 @@ class HotkeyListener(QWidget):
         self._hwnd = int(self.winId())
         for hid, (mods, vk) in self._HOTKEYS.items():
             ctypes.windll.user32.RegisterHotKey(self._hwnd, hid, mods, vk)
+        self._lock_poll.start()
 
     def stop(self):
         """注销所有快捷键。"""
+        self._lock_poll.stop()
         if self._hwnd:
             for hid in self._HOTKEYS:
                 ctypes.windll.user32.UnregisterHotKey(self._hwnd, hid)
         self.hide()
+
+    def _poll_lock_hotkey(self):
+        """Ctrl+Alt+L 常被系统占用，RegisterHotKey 易失败，改由轮询检测。"""
+        ctrl = bool(ctypes.windll.user32.GetAsyncKeyState(0x11) & 0x8000)
+        alt = bool(ctypes.windll.user32.GetAsyncKeyState(0x12) & 0x8000)
+        lkey = bool(ctypes.windll.user32.GetAsyncKeyState(self._VK_L) & 0x8000)
+        down = ctrl and alt and lkey
+        if down and not self._lock_combo_down:
+            self._manager._hotkey_toggle_lock()
+        self._lock_combo_down = down
 
     def nativeEvent(self, eventType, message):
         if eventType == b"windows_generic_MSG":
@@ -3204,6 +3373,24 @@ class NoteManager:
             if key not in data:
                 data[key] = value
                 changed = True
+        if data.get("data_version", 1) < 2:
+            for note in data.get("notes", {}).values():
+                if "font_weight" not in note:
+                    continue
+                fw = int(note["font_weight"])
+                if 0 <= fw <= 100:
+                    note["font_weight"] = min(900, 400 + fw * 5)
+                    changed = True
+            data["data_version"] = 2
+            changed = True
+        if data.get("data_version", 1) < 3:
+            for note in data.get("notes", {}).values():
+                snapped = _snap_font_weight(int(note.get("font_weight", 400)))
+                if note.get("font_weight") != snapped:
+                    note["font_weight"] = snapped
+                    changed = True
+            data["data_version"] = 3
+            changed = True
         for note in data.get("notes", {}).values():
             if NoteManager._migrate_note(note):
                 changed = True
@@ -3244,6 +3431,10 @@ class NoteManager:
             if key not in note:
                 note[key] = value
                 changed = True
+        snapped = _snap_font_weight(int(note.get("font_weight", 400)))
+        if note.get("font_weight") != snapped:
+            note["font_weight"] = snapped
+            changed = True
         return changed
 
     # ── 语言 ──────────────────────────────────────────────
@@ -3341,7 +3532,7 @@ class NoteManager:
             win.hide()
 
     def _toggle_all_notes(self):
-        """Ctrl+Alt+H：有便签可见则全部隐藏，否则全部显示。"""
+        """Ctrl+Alt+H：有便签窗口可见则最小化到托盘，否则恢复显示（不含已隐藏的便签）。"""
         any_visible = any(w.isVisible() for w in self._windows.values())
         if any_visible:
             self.minimize_to_tray()
@@ -3419,7 +3610,20 @@ class NoteManager:
             win.show()
         self.save()
 
+    def visible_note_count(self) -> int:
+        return sum(
+            1 for n in self._data["notes"].values() if n.get("visible", True)
+        )
+
+    def can_hide_note(self, note_id: str) -> bool:
+        note = self._data["notes"].get(note_id)
+        if not note or not note.get("visible", True):
+            return False
+        return self.visible_note_count() > 1
+
     def hide_note(self, note_id: str):
+        if not self.can_hide_note(note_id):
+            return
         self._data["notes"][note_id]["visible"] = False
         if note_id in self._windows:
             self._windows[note_id].hide()
@@ -3474,6 +3678,17 @@ class NoteManager:
         source = next((w for w in self._windows.values() if w.isVisible()), None)
         nid = self.create_note(source_win=source)
         self.show_note(nid)
+
+    def _hotkey_toggle_lock(self):
+        """Ctrl+Alt+L：同时锁定或解锁全部便签（与单张便签右键菜单的锁定无关）。"""
+        if not self._windows:
+            return
+        lock_all = not all(
+            w.settings.get("locked", False) for w in self._windows.values()
+        )
+        for w in self._windows.values():
+            if w.settings.get("locked", False) != lock_all:
+                w._toggle_lock(lock_all)
 
     def quit(self):
         self._quitting = True
